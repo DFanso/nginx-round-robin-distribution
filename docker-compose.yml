@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  # Nginx load balancer
+  nginx-lb:
+    build:
+      context: ./nginx-lb
+    ports:
+      - "80:80"
+    depends_on:
+      - web1
+      - web2
+    networks:
+      - frontend
+
+  # Backend Nginx web servers
+  web1:
+    build:
+      context: ./web
+    volumes:
+      - ./web/html:/usr/share/nginx/html
+    depends_on:
+      - php1
+      - php2
+    networks:
+      - frontend
+      - backend
+
+  web2:
+    build:
+      context: ./web
+    volumes:
+      - ./web/html:/usr/share/nginx/html
+    depends_on:
+      - php1
+      - php2
+    networks:
+      - frontend
+      - backend
+
+  # PHP servers
+  php1:
+    build:
+      context: ./php
+    volumes:
+      - ./web/html:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - backend
+      - database
+
+  php2:
+    build:
+      context: ./php
+    volumes:
+      - ./web/html:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - backend
+      - database
+
+  # MySQL database server
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - database
+
+volumes:
+  db_data:
+
+networks:
+  frontend:
+  backend:
+  database: 
