@@ -36,13 +36,12 @@ sleep 10
 
 # Step 3: Display container IPs for direct access
 echo "Step 3: Displaying container IPs for direct access..."
-# Get container IPs properly from the first network interface
-echo "Load Balancer IP: $(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_frontend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-nginx-lb-1)"
-echo "Web Server 1 IP: $(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_frontend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-web1-1)"
-echo "Web Server 2 IP: $(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_frontend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-web2-1)"
-echo "PHP Server 1 IP: $(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_backend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-php1-1)"
-echo "PHP Server 2 IP: $(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_backend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-php2-1)"
-echo "Database IP: $(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_database"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-db-1)"
+echo "Load Balancer IP: $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-nginx-lb-1)"
+echo "Web Server 1 IP: $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-web1-1)"
+echo "Web Server 2 IP: $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-web2-1)"
+echo "PHP Server 1 IP: $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-php1-1)"
+echo "PHP Server 2 IP: $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-php2-1)"
+echo "Database IP: $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-db-1)"
 
 # Step 4: Make test scripts executable
 echo "Step 4: Making test scripts executable..."

@@ -35,12 +35,12 @@ echo "Waiting for services to be available..."
 sleep 10
 
 # Get the IP of the load balancer
-LB_IP=$(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_frontend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-nginx-lb-1)
+LB_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-nginx-lb-1)
 echo "Load Balancer IP: $LB_IP"
 
 # Get IPs of individual web servers
-WEB1_IP=$(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_frontend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-web1-1)
-WEB2_IP=$(docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{if eq $key "nginx-round-robin-distribution_frontend"}}{{$value.IPAddress}}{{end}}{{end}}' nginx-round-robin-distribution-web2-1)
+WEB1_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-web1-1)
+WEB2_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-round-robin-distribution-web2-1)
 echo "Web Server 1 IP: $WEB1_IP"
 echo "Web Server 2 IP: $WEB2_IP"
 

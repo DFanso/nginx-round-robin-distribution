@@ -31,6 +31,24 @@ else
   echo "Using container IP for testing: $TEST_URL"
 fi
 
+# Function to extract server information from response
+get_server_info() {
+  local response_file=$1
+  
+  # Extract server details
+  local server_name=$(grep -o "Server Name:[^<]*" $response_file | awk -F ">" '{print $2}')
+  local server_ip=$(grep -o "Server IP:[^<]*" $response_file | awk -F ">" '{print $2}')
+  local client_ip=$(grep -o "Client IP:[^<]*" $response_file | awk -F ">" '{print $2}')
+  local php_version=$(grep -o "PHP Version:[^<]*" $response_file | awk -F ">" '{print $2}')
+  
+  echo "   Currently serving server: $server_name ($server_ip)"
+  echo "   Client IP: $client_ip"
+  echo "   PHP Version: $php_version"
+  
+  # Return the server name for tracking distribution
+  echo "$server_name"
+}
+
 # Array to store server names
 declare -a SERVERS
 
@@ -44,18 +62,11 @@ for ((i=1; i<=$NUM_REQUESTS; i++)); do
   # Save response to temp file
   curl -s "$TEST_URL" > temp_response.html
   
-  # Extract server details directly from HTML
-  SERVER_NAME=$(grep -o '<p><strong>Server Name:</strong> [^<]*' temp_response.html | cut -d'>' -f3 | cut -d' ' -f2-)
-  SERVER_IP=$(grep -o '<p><strong>Server IP:</strong> [^<]*' temp_response.html | cut -d'>' -f3 | cut -d' ' -f2-)
-  CLIENT_IP=$(grep -o '<p><strong>Client IP:</strong> [^<]*' temp_response.html | cut -d'>' -f3 | cut -d' ' -f2-)
-  PHP_VERSION=$(grep -o '<p><strong>PHP Version:</strong> [^<]*' temp_response.html | cut -d'>' -f3 | cut -d' ' -f2-)
-  
-  echo "   Currently serving server: $SERVER_NAME ($SERVER_IP)"
-  echo "   Client IP: $CLIENT_IP"
-  echo "   PHP Version: $PHP_VERSION"
+  # Get server info from response
+  SERVER=$(get_server_info "temp_response.html")
   
   # Store server name for distribution counting
-  SERVERS[$i]=$SERVER_NAME
+  SERVERS[$i]=$SERVER
   
   # Add a visual separator
   echo "   ----------------------------------"
